@@ -383,8 +383,7 @@ void *poolFixedMalloc(long size /* bytes */)
 /*E*/if(db9)getPoolStats(&i1,&j1_,&k1); if(db9)printf("a0: pool %ld stat %ld\n",poolTotalFree,i1+j1_);
   if (!memFreePoolSize) { /* The pool is empty; we must allocate memory */
     ptr = malloc( 3 * sizeof(long) + (size_t)size);
-    if (!ptr) outOfMemory(
-        cat("#25 (poolFixedMalloc ", str((double)size), ")", NULL));
+    if (!ptr) outOfMemory("#25 (poolFixedMalloc %u)", size);
 
     ptr = (long *)ptr + 3;
     ((long *)ptr)[-1] = size; /* Actual size */
@@ -410,8 +409,7 @@ void *poolFixedMalloc(long size /* bytes */)
       print2("Memory is low.  Deallocating storage pool...\n");
       memFreePoolPurge(0);
       ptr = malloc( 3 * sizeof(long) + (size_t)size);
-      if (!ptr) outOfMemory(
-          cat("#26 (poolMalloc ", str((double)size), ")", NULL));
+      if (!ptr) outOfMemory("#26 (poolMalloc %u)", size);
                                             /* Nothing more can be done */
     }
     ptr = (long *)ptr + 3;
@@ -441,7 +439,7 @@ void *poolMalloc(long size /* bytes */)
   if (!memFreePoolSize) { /* The pool is empty; we must allocate memory */
     ptr = malloc( 3 * sizeof(long) + (size_t)size);
     if (!ptr) {
-      outOfMemory(cat("#27 (poolMalloc ", str((double)size), ")", NULL));
+      outOfMemory("#27 (poolMalloc %u)", size);
     }
     ptr = (long *)ptr + 3;
     ((long *)ptr)[-1] = size; /* Actual size */
@@ -464,8 +462,7 @@ void *poolMalloc(long size /* bytes */)
         print2("Memory is low.  Deallocating storage pool...\n");
         memFreePoolPurge(0);
         ptr = malloc( 3 * sizeof(long) + (size_t)size);
-        if (!ptr) outOfMemory(
-            cat("#28 (poolMalloc ", str((double)size), ")", NULL));
+        if (!ptr) outOfMemory("#28 (poolMalloc %u)", size);
                                               /* Nothing more can be done */
       }
       ptr = (long *)ptr + 3;
@@ -495,7 +492,7 @@ void *poolMalloc(long size /* bytes */)
           (size_t)memUsedPoolTmpMax * sizeof(void *));
     }
     if (!memUsedPoolTmpPtr) {
-      outOfMemory(cat("#29 (poolMalloc ", str((double)memUsedPoolTmpMax), ")", NULL));
+      outOfMemory("#29 (poolMalloc %u)", memUsedPoolTmpMax);
     } else {
       /* Reallocation successful */
       memUsedPool = memUsedPoolTmpPtr;
@@ -550,7 +547,7 @@ void poolFree(void *ptr)
     }
     if (!memFreePoolTmpPtr) {
 /*E*/if(db9)printf("Realloc failed\n");
-      outOfMemory(cat("#30 (poolFree ", str((double)memFreePoolTmpMax), ")", NULL));
+      outOfMemory("#30 (poolFree %u)", memFreePoolTmpMax);
     } else {
       /* Reallocation successful */
       memFreePool = memFreePoolTmpPtr;
@@ -595,7 +592,7 @@ void addToUsedPool(void *ptr)
           * sizeof(void *));
     }
     if (!memUsedPoolTmpPtr) {
-      outOfMemory("#31 (addToUsedPool)");
+      outOfMemory("#31 (addToUsedPool)", 0);
     } else {
       /* Reallocation successful */
       memUsedPool = memUsedPoolTmpPtr;
@@ -716,17 +713,6 @@ long getFreeSpace(long max)
     }
   }
   return (i);
-}
-
-/* Fatal memory allocation error */
-void outOfMemory(const char *msg) {
-  char const* format =
-        "*** FATAL ERROR:  Out of memory.\n"
-        "Internal identifier (for technical support):  %s\n"
-        "To solve this problem, remove some unnecessary statements or file\n"
-        "inclusions to reduce the size of your input source.\n"
-        "Monitor memory periodically with SHOW MEMORY.\n";
-  fatalErrorExit(format, msg);
 }
 
 
@@ -1003,7 +989,7 @@ temp_nmbrString *nmbrTempAlloc(long size)
   if (size) {
     if (g_nmbrTempAllocStackTop>=(M_MAX_ALLOC_STACK-1)) {
       /*??? Fix to allocate more */
-      outOfMemory("#105 (nmbrString stack array)");
+      outOfMemory("#105 (nmbrString stack array)", 0);
     }
     if (!(nmbrTempAllocStack[g_nmbrTempAllocStackTop++]=poolMalloc(size
         *(long)(sizeof(nmbrString)))))
@@ -2530,7 +2516,7 @@ temp_pntrString *pntrTempAlloc(long size) {
   if (size) {
     if (g_pntrTempAllocStackTop>=(M_MAX_ALLOC_STACK-1))
       /*??? Fix to allocate more */
-      outOfMemory("#109 (pntrString stack array)");
+      outOfMemory("#109 (pntrString stack array)", 0);
     if (!(pntrTempAllocStack[g_pntrTempAllocStackTop++]=poolMalloc(size
         *(long)(sizeof(pntrString)))))
 /*E*/db2=db2+(size)*(long)(sizeof(pntrString));

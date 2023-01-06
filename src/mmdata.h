@@ -439,19 +439,6 @@ void initBigArrays(void);
 long getFreeSpace(long max);
 
 /*!
- * \fn void outOfMemory(const char *msg)
- * \brief exit after fatal memory allocation error.
- *
- * called when memory cannot be allocated, either because memory/address space
- * is physically exhausted, or because administrative structures would overflow.
- * A non-recoverable condition, so stops execution with an error condition
- *
- * \param msg a short error message displayed to the user.
- * \return never, but exits the program instead.
- */
-void outOfMemory(const char *msg);
-
-/*!
  * \anchor bugfn
  * \fn void bug(int bugNum)
  * \param[in] bugNum

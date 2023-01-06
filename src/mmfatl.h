@@ -293,6 +293,31 @@ extern void fatalErrorPrintAndExit(void);
  */
 extern void fatalErrorExit(char const* msgWithPlaceholders, ...);
 
+/*!
+ * \brief exit after a fatal memory allocation error.
+ *
+ * called when memory cannot be allocated, either because memory/address space
+ * is physically exhausted, or because administrative structures would overflow.
+ * A non-recoverable condition, so stops execution printing an error message
+ * \param[in] ident [printf style] used to identify both the location of the
+ *   failing allocation, and gives some context information.  Part of the error
+ *   message sent to stderr.  A line feed is padded to the right, so it appears
+ *   at the end of line.  It may contain at most one %u placeholder that gets
+ *   replaced with \p value.  Any % character part of the text must be escaped
+ *   as %%.
+ * \param[in] value replaces a %u placeholder in \p ident, if exists, ignored
+ *   otherwise.  If not used, best assign 0, as some processors supply extra
+ *   machine instructions for this frequent value. (C neither allows
+ *   overloading, nor a default parameter, so we end up passing always a
+ *   parameter, even if it is not evaluated.)
+ * \post [noreturn] the program terminates with error code EXIT_FAILURE, after
+ *   writing the buffer contents to stderr.
+ * \invariant the memory state of the rest of the program is not changed (in
+ *   case there is still a function in the atexit queue).
+ */
+void outOfMemory(const char *ident,
+                 unsigned value); /*used only if ident contains a %u */
+
 #ifdef TEST_ENABLE
 
 extern void test_mmfatl(void);

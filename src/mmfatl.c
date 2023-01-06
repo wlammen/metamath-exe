@@ -465,6 +465,35 @@ void fatalErrorExit(char const* msgWithPlaceholders, ...) {
   fatalErrorPrintAndExit();
 }
 
+#ifdef TEST_ENABLE
+
+// a reduced error message to ease checking test results
+#define OUTOFMEM_PREFIX "*** "
+#define OUTOFMEM_SUFFIX "\n***"
+
+#else
+
+#define OUTOFMEM_PREFIX \
+  "*** FATAL ERROR:  Out of memory.\n"\
+  "Internal identifier (for technical support):  "
+
+// start the suffix with \n to have the inserted part at the end of line
+// a line feed is automatically added to the end of the whole message
+#define OUTOFMEM_SUFFIX "\n" \
+  "To solve this problem, remove some unnecessary statements or file\n" \
+  "inclusions to reduce the size of your input source.\n" \
+  "Monitor memory periodically with SHOW MEMORY."
+
+#endif
+
+void outOfMemory(const char *ident, unsigned value) {
+  fatalErrorInit();
+  fatalErrorPush(OUTOFMEM_PREFIX);
+  fatalErrorPush(ident, value);
+  fatalErrorPush(OUTOFMEM_SUFFIX);
+  fatalErrorPrintAndExit();
+}
+
 
 //=================   Regression tests   =====================
 
@@ -866,6 +895,21 @@ static bool test_fatalErrorExit() {
   return true;
 }
 
+static bool test_outOfMemory() {
+  // note that in test mode the fatalErrorExit neither prints to stderr
+  // nor exits.  The message is still in the buffer.
+
+  outOfMemory("error", 0);
+  ASSERT(strcmp(buffer.text, "*** error\n***\n") == 0);
+  outOfMemory("error #%u", 1234);
+  ASSERT(strcmp(buffer.text, "*** error #1234\n***\n") == 0);
+  // corner case
+  outOfMemory("%u error", 0);
+  ASSERT(strcmp(buffer.text, "*** 0 error\n***\n") == 0);
+
+  return true;
+}
+
 
 void test_mmfatl(void) {
   RUN_TEST(test_unsignedToString);
@@ -880,6 +924,7 @@ void test_mmfatl(void) {
   RUN_TEST(test_fatalErrorPush);
   RUN_TEST(test_fatalErrorPrintAndExit);
   RUN_TEST(test_fatalErrorExit);
+  RUN_TEST(test_outOfMemory);
 }
 
 #endif // TEST_ENABLE

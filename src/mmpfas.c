@@ -15,6 +15,7 @@
 #include "mmunif.h"
 #include "mmpfas.h"
 #include "mmwtex.h"
+#include "mmfatl.h"
 
 /* Allow user to define INLINE as "inline".  lcc doesn't support inline. */
 #ifndef INLINE
@@ -3122,7 +3123,7 @@ void declareDummyVars(long numNewVars)
       g_MAX_MATHTOKENS = g_MAX_MATHTOKENS + 1000;
       g_MathToken = realloc(g_MathToken, (size_t)g_MAX_MATHTOKENS *
         sizeof(struct mathToken_struct));
-      if (!g_MathToken) outOfMemory("#10 (mathToken)");
+      if (!g_MathToken) outOfMemory("#10 (mathToken)", 0);
     }
 
     g_MathToken[g_mathTokens + g_dummyVars].tokenName = "";

@@ -15,6 +15,7 @@
 #include "mmpars.h" /* For rawSourceError and mathSrchCmp and lookupLabel */
 #include "mmwtex.h"
 #include "mmcmdl.h" /* For g_texFileName */
+#include "mmfatl.h"
 
 /* All LaTeX and HTML definitions are taken from the source
    file (read in the by READ... command).  In the source file, there should
@@ -610,7 +611,7 @@ flag readTexDefs(
             numSymbs, g_input_fn);
       }
       g_TexDefs = malloc((size_t)numSymbs * sizeof(struct texDef_struct));
-      if (!g_TexDefs) outOfMemory("#99 (TeX symbols)");
+      if (!g_TexDefs) outOfMemory("#99 (TeX symbols)", 0);
     }
 
   } /* next parsePass */
