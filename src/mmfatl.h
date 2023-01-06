@@ -318,6 +318,8 @@ extern void fatalErrorExit(char const* msgWithPlaceholders, ...);
 void outOfMemory(const char *ident,
                  unsigned value); /*used only if ident contains a %u */
 
+#define OOM_UNUSED 0u
+
 #ifdef TEST_ENABLE
 
 extern void test_mmfatl(void);

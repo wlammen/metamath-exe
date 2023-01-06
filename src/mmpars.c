@@ -203,7 +203,7 @@ void parseKeywords(void)
   /* Reallocate the statement array for all potential statements */
   g_Statement = realloc(g_Statement, (size_t)potentialStatements
       * sizeof(struct statement_struct));
-  if (!g_Statement) outOfMemory("#4 (statement)", 0);
+  if (!g_Statement) outOfMemory("#4 (statement)", OOM_UNUSED);
 
   /* Initialize the statement array */
   i = 0;
@@ -470,7 +470,7 @@ void parseLabels(void) {
                 "A label isn't allowed for this statement type.");
       }
       g_Statement[stmt].labelName = malloc((size_t)j + 1);
-      if (!g_Statement[stmt].labelName) outOfMemory("#5 (label)", 0);
+      if (!g_Statement[stmt].labelName) outOfMemory("#5 (label)", OOM_UNUSED);
       g_Statement[stmt].labelName[j] = 0;
       memcpy(g_Statement[stmt].labelName, fbPtr, (size_t)j);
       fbPtr = fbPtr + j;
@@ -503,7 +503,7 @@ void parseLabels(void) {
 
   /* Sort the labels for later lookup */
   g_labelKey = malloc(((size_t)g_statements + 1) * sizeof(long));
-  if (!g_labelKey) outOfMemory("#6 (g_labelKey)", 0);
+  if (!g_labelKey) outOfMemory("#6 (g_labelKey)", OOM_UNUSED);
   for (i = 1; i <= g_statements; i++) {
     g_labelKey[i] = i;
   }
@@ -529,7 +529,7 @@ void parseLabels(void) {
   /* Copy the keys for all possible labels for lookup by the
      squishProof command when local labels are generated in packed proofs. */
   g_allLabelKeyBase = malloc((size_t)g_numLabelKeys * sizeof(long));
-  if (!g_allLabelKeyBase) outOfMemory("#60 (g_allLabelKeyBase)", 0);
+  if (!g_allLabelKeyBase) outOfMemory("#60 (g_allLabelKeyBase)", OOM_UNUSED);
   memcpy(g_allLabelKeyBase, g_labelKeyBase, (size_t)g_numLabelKeys * sizeof(long));
   g_numAllLabelKeys = g_numLabelKeys;
 
@@ -587,7 +587,7 @@ void parseMathDecl(void) {
 /*E*/if(db5)print2("%ld potential symbols were computed.\n",potentialSymbols);
   g_MathToken = realloc(g_MathToken, (size_t)potentialSymbols *
       sizeof(struct mathToken_struct));
-  if (!g_MathToken) outOfMemory("#7 (g_MathToken)", 0);
+  if (!g_MathToken) outOfMemory("#7 (g_MathToken)", OOM_UNUSED);
 
   /* Scan $c and $v statements to accumulate all possible math symbols */
   g_mathTokens = 0;
@@ -602,7 +602,7 @@ void parseMathDecl(void) {
           j = tokenLen(fbPtr + i);
           if (!j) break;
           tmpPtr = malloc((size_t)j + 1); /* Math symbol name */
-          if (!tmpPtr) outOfMemory("#8 (symbol name)", 0);
+          if (!tmpPtr) outOfMemory("#8 (symbol name)", OOM_UNUSED);
           tmpPtr[j] = 0; /* End of string */
           memcpy(tmpPtr, fbPtr + i, (size_t)j);
           fbPtr = fbPtr + i + j;
@@ -647,7 +647,7 @@ void parseMathDecl(void) {
   g_MAX_MATHTOKENS = g_mathTokens + 100;
   g_MathToken = realloc(g_MathToken, (size_t)g_MAX_MATHTOKENS *
       sizeof(struct mathToken_struct));
-  if (!g_MathToken) outOfMemory("#10 (g_MathToken)", 0);
+  if (!g_MathToken) outOfMemory("#10 (g_MathToken)", OOM_UNUSED);
 
   /* Create a special "$|$" boundary token to separate real and dummy ones */
   g_MathToken[g_mathTokens].tokenName = "";
@@ -663,7 +663,7 @@ void parseMathDecl(void) {
 
   /* Sort the math symbols for later lookup */
   g_mathKey = malloc((size_t)g_mathTokens * sizeof(long));
-  if (!g_mathKey) outOfMemory("#11 (g_mathKey)", 0);
+  if (!g_mathKey) outOfMemory("#11 (g_mathKey)", OOM_UNUSED);
   for (i = 0; i < g_mathTokens; i++) {
     g_mathKey[i] = i;
   }
@@ -806,9 +806,9 @@ void parseStatements(void) {
      unique (when 0) or, if not unique, the flag is a number identifying a group
      of identical names */
   mathTokenSameAs = malloc((size_t)g_mathTokens * sizeof(long));
-  if (!mathTokenSameAs) outOfMemory("#12 (mathTokenSameAs)", 0);
+  if (!mathTokenSameAs) outOfMemory("#12 (mathTokenSameAs)", OOM_UNUSED);
   reverseMathKey = malloc((size_t)g_mathTokens * sizeof(long));
-  if (!reverseMathKey) outOfMemory("#13 (reverseMathKey)", 0);
+  if (!reverseMathKey) outOfMemory("#13 (reverseMathKey)", OOM_UNUSED);
   for (i = 0; i < g_mathTokens; i++) {
     mathTokenSameAs[i] = 0; /* 0 means unique */
     reverseMathKey[g_mathKey[i]] = i; /* Initialize reverse map to g_mathKey */
@@ -825,11 +825,11 @@ void parseStatements(void) {
      unique (when 0) or, if not unique, the flag is a number identifying a group
      of identical names */
   labelTokenSameAs = malloc(((size_t)g_statements + 1) * sizeof(long));
-  if (!labelTokenSameAs) outOfMemory("#112 (labelTokenSameAs)", 0);
+  if (!labelTokenSameAs) outOfMemory("#112 (labelTokenSameAs)", OOM_UNUSED);
   reverseLabelKey = malloc(((size_t)g_statements + 1) * sizeof(long));
-  if (!reverseLabelKey) outOfMemory("#113 (reverseLabelKey)", 0);
+  if (!reverseLabelKey) outOfMemory("#113 (reverseLabelKey)", OOM_UNUSED);
   labelActiveFlag = malloc(((size_t)g_statements + 1) * sizeof(flag));
-  if (!labelActiveFlag) outOfMemory("#114 (labelActiveFlag)", 0);
+  if (!labelActiveFlag) outOfMemory("#114 (labelActiveFlag)", OOM_UNUSED);
   for (i = 1; i <= g_statements; i++) {
     labelTokenSameAs[i] = 0; /* Initialize:  0 = unique */
     reverseLabelKey[g_labelKey[i]] = i; /* Initialize reverse map to g_labelKey */
@@ -856,7 +856,7 @@ void parseStatements(void) {
   wrkVarPtr1 = malloc((size_t)g_MAX_MATHTOKENS * sizeof(nmbrString));
   wrkVarPtr2 = malloc((size_t)g_MAX_MATHTOKENS * sizeof(nmbrString));
   if (!activeConstStack || !activeVarStack || !wrkVarPtr1 || !wrkVarPtr2)
-      outOfMemory("#14 (activeVarStack)", 0);
+      outOfMemory("#14 (activeVarStack)", OOM_UNUSED);
 
   activeEHypStack = malloc((size_t)activeHypStackSize
       * sizeof(struct activeEHypStack_struct));
@@ -867,7 +867,7 @@ void parseStatements(void) {
   wrkHypPtr3 = malloc((size_t)activeHypStackSize * sizeof(nmbrString));
   if (!activeEHypStack || !activeFHypStack || !wrkHypPtr1 || !wrkHypPtr2 ||
       !wrkHypPtr3)
-      outOfMemory("#15 (activeHypStack)", 0);
+      outOfMemory("#15 (activeHypStack)", OOM_UNUSED);
 
   activeDisjHypStack = malloc((size_t)activeDisjHypStackSize *
       sizeof(struct activeDisjHypStack_struct));
@@ -882,14 +882,14 @@ void parseStatements(void) {
   if (!activeDisjHypStack
       || !wrkDisjHPtr1A || !wrkDisjHPtr1B || !wrkDisjHPtr1Stmt
       || !wrkDisjHPtr2A || !wrkDisjHPtr2B || !wrkDisjHPtr2Stmt)
-      outOfMemory("#27 (activeDisjHypStack)", 0);
+      outOfMemory("#27 (activeDisjHypStack)", OOM_UNUSED);
 
   /* Initialize temporary working space for parsing tokens */
   wrkLen = 1;
   wrkNmbrPtr = malloc((size_t)wrkLen * sizeof(nmbrString));
-  if (!wrkNmbrPtr) outOfMemory("#22 (wrkNmbrPtr)", 0);
+  if (!wrkNmbrPtr) outOfMemory("#22 (wrkNmbrPtr)", OOM_UNUSED);
   wrkStrPtr = malloc((size_t)wrkLen + 1);
-  if (!wrkStrPtr) outOfMemory("#23 (wrkStrPtr)", 0);
+  if (!wrkStrPtr) outOfMemory("#23 (wrkStrPtr)", OOM_UNUSED);
 
   /* Find declared math symbol lengths (used to speed up parsing) */
   maxSymbolLen = 0;
@@ -899,7 +899,7 @@ void parseStatements(void) {
     }
   }
   symbolLenExists = malloc(((size_t)maxSymbolLen + 1) * sizeof(flag));
-  if (!symbolLenExists) outOfMemory("#25 (symbolLenExists)", 0);
+  if (!symbolLenExists) outOfMemory("#25 (symbolLenExists)", OOM_UNUSED);
   for (i = 0; i <= maxSymbolLen; i++) {
     symbolLenExists[i] = 0;
   }
@@ -923,7 +923,7 @@ void parseStatements(void) {
     switch (type) {
       case lb_:
         g_currentScope++;
-        if (g_currentScope > 32000) outOfMemory("#16 (more than 32000 \"${\"s)", 0);
+        if (g_currentScope > 32000) outOfMemory("#16 (more than 32000 \"${\"s)", OOM_UNUSED);
             /* Not really an out-of-memory situation, but use the error msg. */
         /* Note that g_Statement[stmt].beginScopeStatementNum for this ${
            points to the previous ${ (or 0 if in outermost scope) */
@@ -1087,9 +1087,9 @@ void parseStatements(void) {
           free(wrkStrPtr);
           wrkLen = mathSectionLen + 100;
           wrkNmbrPtr = malloc((size_t)wrkLen * sizeof(nmbrString));
-          if (!wrkNmbrPtr) outOfMemory("#20 (wrkNmbrPtr)", 0);
+          if (!wrkNmbrPtr) outOfMemory("#20 (wrkNmbrPtr)", OOM_UNUSED);
           wrkStrPtr = malloc((size_t)wrkLen + 1);
-          if (!wrkStrPtr) outOfMemory("#21 (wrkStrPtr)", 0);
+          if (!wrkStrPtr) outOfMemory("#21 (wrkStrPtr)", OOM_UNUSED);
         }
 
         /* Scan the math section for tokens */
@@ -1191,7 +1191,7 @@ void parseStatements(void) {
               print2(
 "there are too many errors.  Therefore we will force an \"out of memory\"\n");
               print2("program abort:\n");
-              outOfMemory("#33 (too many errors)", 0);
+              outOfMemory("#33 (too many errors)", OOM_UNUSED);
             }
             g_MathToken[tokenNum].tokenName = "";
             let(&g_MathToken[tokenNum].tokenName, left(fbPtr,symbolLen));
@@ -1363,7 +1363,7 @@ void parseStatements(void) {
                 if (!activeDisjHypStack
                     || !wrkDisjHPtr1A || !wrkDisjHPtr1B || !wrkDisjHPtr1Stmt
                     || !wrkDisjHPtr2A || !wrkDisjHPtr2B || !wrkDisjHPtr2Stmt)
-                    outOfMemory("#28 (activeDisjHypStack)", 0);
+                    outOfMemory("#28 (activeDisjHypStack)", OOM_UNUSED);
               }
               activeDisjHypStack[activeDisjHypStackPtr].tokenNumA = m;
               activeDisjHypStack[activeDisjHypStackPtr].tokenNumB = n;
@@ -1399,7 +1399,7 @@ void parseStatements(void) {
           wrkHypPtr2 = malloc((size_t)activeHypStackSize * sizeof(nmbrString));
           wrkHypPtr3 = malloc((size_t)activeHypStackSize * sizeof(nmbrString));
           if (!activeEHypStack || !activeFHypStack || !wrkHypPtr1 ||
-              !wrkHypPtr2 || !wrkHypPtr3) outOfMemory("#32 (activeHypStack)", 0);
+              !wrkHypPtr2 || !wrkHypPtr3) outOfMemory("#32 (activeHypStack)", OOM_UNUSED);
         }
 
         /* Add the hypothesis to the stack */
@@ -1429,7 +1429,7 @@ void parseStatements(void) {
           k = nmbrTmpPtr[j];
         }
         nmbrTmpPtr = malloc(((size_t)reqVars + 1) * sizeof(nmbrString));
-        if (!nmbrTmpPtr) outOfMemory("#32 (hypothesis variables)", 0);
+        if (!nmbrTmpPtr) outOfMemory("#32 (hypothesis variables)", OOM_UNUSED);
         memcpy(nmbrTmpPtr, wrkVarPtr1, (size_t)reqVars * sizeof(nmbrString));
         nmbrTmpPtr[reqVars] = -1;
         /* Clear the variable flags for future re-use */
@@ -1499,7 +1499,7 @@ void parseStatements(void) {
            permanent list for the statement array */
         nmbrTmpPtr = poolFixedMalloc((reqVars + 1)
             * (long)(sizeof(nmbrString)));
-        /* if (!nmbrTmpPtr) outOfMemory("#30 (reqVars)", 0); */
+        /* if (!nmbrTmpPtr) outOfMemory("#30 (reqVars)", OOM_UNUSED); */
                                               /* Not necessary w/ poolMalloc */
         memcpy(nmbrTmpPtr, wrkVarPtr1, (size_t)reqVars * sizeof(nmbrString));
         nmbrTmpPtr[reqVars] = -1;
@@ -1623,7 +1623,7 @@ void parseStatements(void) {
         /* Now do the allocation */
         nmbrTmpPtr = poolFixedMalloc((reqHyps + 1)
             * (long)(sizeof(nmbrString)));
-        /* if (!nmbrTmpPtr) outOfMemory("#33 (reqHyps)", 0); */
+        /* if (!nmbrTmpPtr) outOfMemory("#33 (reqHyps)", OOM_UNUSED); */
                                        /* Not necessary w/ poolMalloc */
         memcpy(nmbrTmpPtr, wrkHypPtr3, (size_t)reqHyps * sizeof(nmbrString));
         nmbrTmpPtr[reqHyps] = -1;
@@ -2023,7 +2023,7 @@ char parseProof(long statemNum)
         !g_WrkProof.localLabelPool ||
         !g_WrkProof.mathStringPtrs ||
         !g_WrkProof.RPNStack
-        ) outOfMemory("#99 (g_WrkProof)", 0);
+        ) outOfMemory("#99 (g_WrkProof)", OOM_UNUSED);
   }
 
   /* Initialization for this proof */
@@ -2920,7 +2920,7 @@ char parseCompressedProof(long statemNum)
         !g_WrkProof.localLabelPool ||
         !g_WrkProof.mathStringPtrs ||
         !g_WrkProof.RPNStack
-        ) outOfMemory("#99 (g_WrkProof)", 0);
+        ) outOfMemory("#99 (g_WrkProof)", OOM_UNUSED);
   }
 
   /* Initialization for this proof */
@@ -4683,9 +4683,9 @@ nmbrString *parseMathTokens(vstring userText, long statemNum)
      unique (when 0) or, if not unique, the flag is a number identifying a group
      of identical names */
   mathTokenSameAs = malloc((size_t)g_mathTokens * sizeof(long));
-  if (!mathTokenSameAs) outOfMemory("#12 (mathTokenSameAs)", 0);
+  if (!mathTokenSameAs) outOfMemory("#12 (mathTokenSameAs)", OOM_UNUSED);
   reverseMathKey = malloc((size_t)g_mathTokens * sizeof(long));
-  if (!reverseMathKey) outOfMemory("#13 (reverseMathKey)", 0);
+  if (!reverseMathKey) outOfMemory("#13 (reverseMathKey)", OOM_UNUSED);
   for (i = 0; i < g_mathTokens; i++) {
     mathTokenSameAs[i] = 0; /* 0 means unique */
     reverseMathKey[g_mathKey[i]] = i; /* Initialize reverse map to g_mathKey */
@@ -4702,9 +4702,9 @@ nmbrString *parseMathTokens(vstring userText, long statemNum)
   /* Assume the worst case of one token per userText character */
   wrkLen = (long)strlen(userText);
   wrkNmbrPtr = malloc((size_t)wrkLen * sizeof(nmbrString));
-  if (!wrkNmbrPtr) outOfMemory("#22 (wrkNmbrPtr)", 0);
+  if (!wrkNmbrPtr) outOfMemory("#22 (wrkNmbrPtr)", OOM_UNUSED);
   wrkStrPtr = malloc((size_t)wrkLen + 1);
-  if (!wrkStrPtr) outOfMemory("#23 (wrkStrPtr)", 0);
+  if (!wrkStrPtr) outOfMemory("#23 (wrkStrPtr)", OOM_UNUSED);
 
   /* Find declared math symbol lengths (used to speed up parsing) */
   maxSymbolLen = 0;
@@ -4714,7 +4714,7 @@ nmbrString *parseMathTokens(vstring userText, long statemNum)
     }
   }
   symbolLenExists = malloc(((size_t)maxSymbolLen + 1) * sizeof(flag));
-  if (!symbolLenExists) outOfMemory("#25 (symbolLenExists)", 0);
+  if (!symbolLenExists) outOfMemory("#25 (symbolLenExists)", OOM_UNUSED);
   for (i = 0; i <= maxSymbolLen; i++) {
     symbolLenExists[i] = 0;
   }
@@ -5638,7 +5638,7 @@ vstring readInclude(const char *fileBuf, long fileBufOffset,
 /*E*/    g_MAX_INCLUDECALLS);
       g_IncludeCall = realloc(g_IncludeCall, (size_t)g_MAX_INCLUDECALLS *
           sizeof(struct includeCall_struct));
-      if (g_IncludeCall == NULL) outOfMemory("#2 (g_IncludeCall)", 0);
+      if (g_IncludeCall == NULL) outOfMemory("#2 (g_IncludeCall)", OOM_UNUSED);
     }
     g_IncludeCall[g_includeCalls].pushOrPop = 0;
 

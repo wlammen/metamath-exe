@@ -611,7 +611,7 @@ flag readTexDefs(
             numSymbs, g_input_fn);
       }
       g_TexDefs = malloc((size_t)numSymbs * sizeof(struct texDef_struct));
-      if (!g_TexDefs) outOfMemory("#99 (TeX symbols)", 0);
+      if (!g_TexDefs) outOfMemory("#99 (TeX symbols)", OOM_UNUSED);
     }
 
   } /* next parsePass */

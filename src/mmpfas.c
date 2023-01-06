@@ -3123,7 +3123,7 @@ void declareDummyVars(long numNewVars)
       g_MAX_MATHTOKENS = g_MAX_MATHTOKENS + 1000;
       g_MathToken = realloc(g_MathToken, (size_t)g_MAX_MATHTOKENS *
         sizeof(struct mathToken_struct));
-      if (!g_MathToken) outOfMemory("#10 (mathToken)", 0);
+      if (!g_MathToken) outOfMemory("#10 (mathToken)", OOM_UNUSED);
     }
 
     g_MathToken[g_mathTokens + g_dummyVars].tokenName = "";

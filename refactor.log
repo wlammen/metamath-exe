@@ -18,10 +18,12 @@ nothing else (apart from cosmetic corrections).
    this drawback.  Discontinue support of this kind of location markers.
 [wl 7209823] bug() has an error exit, that was overseen.  Using fatalErrorExit
    also cures a very rare bug: The returned value 1 need not necessarily
-   indicate a failure, and can definitly be different from EXIT_FAILURE.
+   indicate a failure, and can be different from EXIT_FAILURE.
    See https://en.cppreference.com/w/c/program/exit.
 [wl 8569baa] The C specs say: open files are automatically flushed and closed
    on program termination, whether normal or abnormal.  Do not call fclose in
    these cases.  See https://en.cppreference.com/w/c/program/exit.
-[] move outOfMemory to mmfatl and subject it to testing.  Change signature such
-   that unsafe cat in a memory-tight situation is avoided.
+[wl aa2b9e5] move outOfMemory to mmfatl and subject it to testing.  Bugfix:
+   Change signature such that unsafe cat in a memory-tight situation is
+   avoided.
+[] Use a telling name for an ignored parameter OOM_UNUSED

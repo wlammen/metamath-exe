@@ -899,7 +899,7 @@ static bool test_outOfMemory() {
   // note that in test mode the fatalErrorExit neither prints to stderr
   // nor exits.  The message is still in the buffer.
 
-  outOfMemory("error", 0);
+  outOfMemory("error", OOM_UNUSED);
   ASSERT(strcmp(buffer.text, "*** error\n***\n") == 0);
   outOfMemory("error #%u", 1234);
   ASSERT(strcmp(buffer.text, "*** error #1234\n***\n") == 0);

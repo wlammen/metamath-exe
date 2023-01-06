@@ -592,7 +592,7 @@ void addToUsedPool(void *ptr)
           * sizeof(void *));
     }
     if (!memUsedPoolTmpPtr) {
-      outOfMemory("#31 (addToUsedPool)", 0);
+      outOfMemory("#31 (addToUsedPool)", OOM_UNUSED);
     } else {
       /* Reallocation successful */
       memUsedPool = memUsedPoolTmpPtr;
@@ -989,7 +989,7 @@ temp_nmbrString *nmbrTempAlloc(long size)
   if (size) {
     if (g_nmbrTempAllocStackTop>=(M_MAX_ALLOC_STACK-1)) {
       /*??? Fix to allocate more */
-      outOfMemory("#105 (nmbrString stack array)", 0);
+      outOfMemory("#105 (nmbrString stack array)", OOM_UNUSED);
     }
     if (!(nmbrTempAllocStack[g_nmbrTempAllocStackTop++]=poolMalloc(size
         *(long)(sizeof(nmbrString)))))
@@ -2516,7 +2516,7 @@ temp_pntrString *pntrTempAlloc(long size) {
   if (size) {
     if (g_pntrTempAllocStackTop>=(M_MAX_ALLOC_STACK-1))
       /*??? Fix to allocate more */
-      outOfMemory("#109 (pntrString stack array)", 0);
+      outOfMemory("#109 (pntrString stack array)", OOM_UNUSED);
     if (!(pntrTempAllocStack[g_pntrTempAllocStackTop++]=poolMalloc(size
         *(long)(sizeof(pntrString)))))
 /*E*/db2=db2+(size)*(long)(sizeof(pntrString));
