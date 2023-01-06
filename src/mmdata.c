@@ -720,8 +720,6 @@ long getFreeSpace(long max)
 
 /* Fatal memory allocation error */
 void outOfMemory(const char *msg) {
-  /* Close the log to make sure error log is saved */
-  disableLogging();
   char const* format =
         "*** FATAL ERROR:  Out of memory.\n"
         "Internal identifier (for technical support):  %s\n"
@@ -804,11 +802,9 @@ void bug(int bugNum)
 
   print2("\n");
   /* Close the log to make sure error log is saved */
-  if (isLoggingEnabled()) {
+  if (isLoggingEnabled())
     print2("The log file \"%s\" was closed %s %s.\n", g_logFileName,
         date(), time_());
-    disableLogging();
-  }
   fatalErrorExit("The program was aborted.");
 }
 

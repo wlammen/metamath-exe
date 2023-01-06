@@ -776,11 +776,6 @@ int main(int argc, char *argv[]) {
   /* Process a command line until EXIT */
   command(argc, argv);
 
-  /* Close logging command file */
-  if (g_listMode && g_listFile_fp != NULL) {
-    fclose(g_listFile_fp);
-  }
-
   return 0;
 
 }
@@ -1276,11 +1271,9 @@ void command(int argc, char *argv[]) {
           fclose(g_texFilePtr);
           g_texFileOpenFlag = 0;
         }
-        if (isLoggingEnabled()) {
+        if (isLoggingEnabled())
           print2("The log file \"%s\" was closed %s %s.\n",g_logFileName,
               date(),time_());
-          disableLogging();
-        }
 
         /* Free remaining allocations before exiting */
         freeCommandLine();
