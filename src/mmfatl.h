@@ -324,6 +324,6 @@ void outOfMemory(const char *ident,
 
 extern void test_mmfatl(void);
 
-#endif
+#endif // TEST_ENABLE
 
-#endif /* include guard */
+#endif // METAMATH_MMFATL_H_

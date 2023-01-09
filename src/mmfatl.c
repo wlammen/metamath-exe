@@ -444,10 +444,10 @@ void fatalErrorPrintAndExit(void) {
       && !isBufferEmpty(buffer)
       && getLastBufferedChar(buffer) != LF)
     fatalErrorPush("\n");
-#ifndef TEST_ENABLE // we don't want a test program terminate here
+#ifndef TEST_ENABLE // we do not want a test program terminating here
   fputs(buffer->text, stderr);
   exit(EXIT_FAILURE);
-#endif
+#endif // TEST_ENABLE
 }
 
 void fatalErrorExit(char const* msgWithPlaceholders, ...) {
