@@ -405,8 +405,7 @@ void memFreePoolPurge(flag untilOK);
 /* Statistics */
 
 /*!
- * \fn getPoolStats(long *freeAlloc, long *usedAlloc, long *usedActual)
- * \brief Provide information about memory in pools at the instant of call.
+ * \brief Provide information about memory in pools at the moment of call.
  *
  * Return the overall statistics about the pools \ref memFreePool
  * "free block array" and the \ref memUsedPool "used block array".  In MEMORY
@@ -417,12 +416,12 @@ void memFreePoolPurge(flag untilOK);
  * \attention This is NOT full memory usage, because completely used
  * \ref pgBlock "blocks" are not tracked!
  *
- * \param[out] freeAlloc (not-null) address of a long variable receiving the
+ * \param[out] freeAlloc [not-null] address of a long variable receiving the
  * accumulated number of bytes in the free list.  Sizes do not include the
  * hidden header present in each block.
- * \param[out] usedAlloc (not-null) address of a long variable receiving the
+ * \param[out] usedAlloc [not-null] address of a long variable receiving the
  * accumulated number of free bytes in partially used blocks.
- * \param[out] usedActual (not-null) address of a long variable receiving the
+ * \param[out] usedActual [not-null] address of a long variable receiving the
  * accumulated bytes consumed by usage so far.  This value includes the hidden
  * header of the block.
  * \pre Do not call within \ref bugfn "bug".\n

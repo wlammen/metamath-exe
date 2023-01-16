@@ -323,11 +323,11 @@ long memUsedPoolMax = 0; /* Maximum # of entries in 'in use' table (grows
                                as necessary) */
 
 /*!
- * \var void** memFreePool
  * \brief pointer to the pool of completely free memory blocks
  *
  * The \ref pgSuballocator "suballocator" is initially not equipped with a
- * **free block array**, pointed to by memFreePool, indicated by a null value.
+ * **free block array**, pointed to by memFreePool, as indicated by the
+ * initial null value.
  *
  * Once a \ref pgBlock "memory block" is returned to the \ref pgSuballocator
  * again, it allocates some space for the now needed array.
@@ -343,7 +343,6 @@ long memUsedPoolMax = 0; /* Maximum # of entries in 'in use' table (grows
 void **memFreePool = NULL;
 
 /*!
- * \var long memFreePoolSize
  * \attention this is the number of individual free blocks, not the accumulated
  * bytes contained.
  *
@@ -357,7 +356,6 @@ void **memFreePool = NULL;
 long memFreePoolSize = 0; /* Current # of available, allocated arrays */
 
 /*!
- * \var long memFreePoolMax
  * \attention this is the number of individual free blocks, not the accumulated
  * bytes contained.
  *

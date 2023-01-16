@@ -318,6 +318,10 @@ extern void fatalErrorExit(char const* msgWithPlaceholders, ...);
 void outOfMemory(const char *ident,
                  unsigned value); /*used only if ident contains a %u */
 
+/*!
+ * Not all callers of \ref outOfMemory need its second parameter _value_.  Use
+ * this constant if this is the case.
+ */
 #define OOM_UNUSED 0u
 
 #ifdef TEST_ENABLE
