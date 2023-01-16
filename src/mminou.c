@@ -337,7 +337,6 @@ flag print2(const char* fmt, ...) {
   }
 
 
-
   /* User typed 'q' above or earlier; don't return if we're outputting to
     a string since we want to complete the writing to the string. */
   if (g_quitPrint && !g_outputToString) goto PRINT2_RETURN;
@@ -1120,8 +1119,6 @@ void errorMessage(vstring line, long lineNum, long column, long tokenLength,
   free_vstring(error);
   if (line1) free_vstring(line1);
 } /* errorMessage() */
-
-
 
 
 /* Opens files with error message; opens output files with

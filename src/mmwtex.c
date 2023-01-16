@@ -1618,7 +1618,6 @@ void printTexHeader(flag texHeaderFlag)
     print2("</TABLE>\n");
 
 
-
     print2("<HR NOSHADE SIZE=1>\n");
 
   } /* g_htmlFlag */
@@ -2760,7 +2759,6 @@ flag printTexComment(vstring commentPtr, flag htmlCenterFlag,
   return returnVal; /* 1 if error/warning found */
 
 } /* printTexComment */
-
 
 
 void printTexLongMath(nmbrString *mathString,
@@ -5078,8 +5076,6 @@ vstring getTexOrHtmlHypAndAssertion(long statemNum) {
   free_vstring(str2);
   return texOrHtmlCode;
 }  /* getTexOrHtmlHypAndAssertion */
-
-
 
 
 /* Called by the WRITE BIBLIOGRAPHY command and also by VERIFY MARKUP
