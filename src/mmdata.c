@@ -371,8 +371,7 @@ long memFreePoolMax = 0; /* Maximum # of entries in 'free' table (grows
 
 /* poolFixedMalloc should be called when the allocated array will rarely be
    changed; a malloc or realloc with no unused array bytes will be done. */
-void *poolFixedMalloc(long size /* bytes */)
-{
+void *poolFixedMalloc(long size /* bytes */) {
   void *ptr;
   void *ptr2;
 /*E*/ /* Don't call print2() if db9 is set, since it will */
@@ -413,7 +412,7 @@ void *poolFixedMalloc(long size /* bytes */)
     ((long *)ptr)[-1] = size; /* Actual size */
     ((long *)ptr)[-2] = size; /* Allocated size */
     ((long *)ptr)[-3] = -1;  /* Location in memUsedPool (-1 = none) */
-    return (ptr);
+    return ptr;
   }
 }
 
@@ -498,12 +497,11 @@ void *poolMalloc(long size /* bytes */)
   ((long *)ptr)[-3] = memUsedPoolSize;
   memUsedPoolSize++;
 /*E*/if(db9)getPoolStats(&i1,&j1_,&k1); if(db9)printf("c: pool %ld stat %ld\n",poolTotalFree,i1+j1_);
-  return (ptr);
+  return ptr;
 }
 
 /* poolFree puts freed up space in memFreePool. */
-void poolFree(void *ptr)
-{
+void poolFree(void *ptr) {
   void *ptr1;
   long usedLoc;
   long memFreePoolTmpMax;
@@ -617,8 +615,7 @@ void addToUsedPool(void *ptr)
  *   - If 0, all \ref memFreePool entries are freed, and the pool itself is
  *     shrunk back to \ref MEM_POOL_GROW size.
  */
-void memFreePoolPurge(flag untilOK)
-{
+void memFreePoolPurge(flag untilOK) {
 /*E*/if(db9)getPoolStats(&i1,&j1_,&k1); if(db9)printf("e0: pool %ld stat %ld\n",poolTotalFree,i1+j1_);
   while (memFreePoolSize) {
     memFreePoolSize--;
@@ -2456,7 +2453,7 @@ temp_pntrString *pntrTempAlloc(long size) {
     if (!(pntrTempAllocStack[g_pntrTempAllocStackTop++]=poolMalloc(size
         *(long)(sizeof(pntrString)))))
 /*E*/db2=db2+(size)*(long)(sizeof(pntrString));
-    return (pntrTempAllocStack[g_pntrTempAllocStackTop-1]);
+    return pntrTempAllocStack[g_pntrTempAllocStackTop-1];
   } else {
     while(g_pntrTempAllocStackTop != g_pntrStartTempAllocStack) {
 /*E*/db2=db2-(pntrLen(pntrTempAllocStack[g_pntrTempAllocStackTop-1])+1)
@@ -2464,7 +2461,7 @@ temp_pntrString *pntrTempAlloc(long size) {
       poolFree(pntrTempAllocStack[--g_pntrTempAllocStackTop]);
     }
     g_pntrTempAllocStackTop=g_pntrStartTempAllocStack;
-    return (0);
+    return 0;
   }
 }
 
@@ -3840,6 +3837,10 @@ int qsortStringCmp(const void *p1, const void *p2)
 
 void freeData(void) {
   /* 15-Aug-2020 nm TODO: are some of these called twice? (in eraseSource) */
+  free_vstring(g_proofDiscouragedMarkup);
+  free_vstring(g_usageDiscouragedMarkup);
+  free_vstring(g_contributorName);
+  memFreePoolPurge(0);
   free(g_IncludeCall);
   free(g_Statement);
   free(g_MathToken);
