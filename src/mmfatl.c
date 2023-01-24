@@ -31,16 +31,21 @@
 #include "mmfatl.h"
 
 /*!
- * some ASCII control characters
+ * supported ASCII control characters in an error message, other control
+ * characters as well as multibyte UTF-8 extensions, are replaced with
+ * UNSUPPORTED_REPLACE
  */
 enum {
   NUL = '\x00',
+  CR = '\r',
   LF = '\n',
+  HT = '\t',
+  PRINTABLE_ASCII_BEGIN = '\x20',
+  PRINTABLE_ASCII_END = '\x7F',
+  UNSUPPORTED_REPLACE = '?'
 };
 
-
 // ***     utility code used in the implementation of the interface    ***
-
 
 /*!
  * \brief a buffer used to generate a text message through a formatting
@@ -163,11 +168,37 @@ enum SourceType {
 };
 
 /*!
+ * \brief replace most control and non-ASCII UTF-8 characters
+ *
+ * Convert all unsupported characters to \ref UNSUPPORTED_REPLACE, return
+ * others unchanged.
+ * \param[in] src character to check
+ * \return \ref src unchanged, if supported, else a replace character.
+ */
+static char replaceUnsupported(char src) {
+  char result = UNSUPPORTED_REPLACE;
+  
+  switch (src) {
+    case PRINTABLE_ASCII_BEGIN ... PRINTABLE_ASCII_END:
+    case CR:
+    case LF:
+    case HT:
+      result = src;
+      break;
+  }
+  return result;
+}
+
+/*!
  * \brief append text to the current contents of the message buffer
  *
  * Append characters to the current end of the buffer from a string until a
  * terminating \ref NUL, or optionally a placeholder is encountered, or the
- * buffer overflows.
+ * buffer overflows.  Most non-printable characters are replaced with
+ * \ref UNSUPPORTED_REPLACE, so the output gets always printed, even if the
+ * caller accidentially submits binary data instead of a message.  This will
+ * render the message illegible, of course, but does not hamper the exit
+ * process otherwise.
  * \param[in] source [not null] the source from which bytes are copied.
  * \param[in] type If \ref FORMAT, \ref MMFATL_PH_PREFIX besides \ref NUL stops
  *   copying.
@@ -181,7 +212,7 @@ static unsigned appendText(char const* source, enum SourceType type,
   char escape = type == FORMAT? MMFATL_PH_PREFIX : NUL;
   char const* start = buffer->begin;
   while (*source != NUL && *source != escape && !isBufferOverflow(buffer))
-    *buffer->begin++ = *source++;
+    *buffer->begin++ = replaceUnsupported(*source++);
   return buffer->begin - start;
 }
 
@@ -233,7 +264,7 @@ static struct ParserState state;
  *
  * Initializes \ref state.
  * \param[in,out] state [not null] the struct \ref ParserState to initialize.
- * \param[in,out] buffer [not null] the buffer to use for output 
+ * \param[in,out] buffer [not null] the buffer to use for output
  * \post establish the invariant in state
  */
 static void initState(struct ParserState* state, struct Buffer* buffer) {
@@ -351,7 +382,7 @@ static void handleSubstitution(struct ParserState* state) {
       arg = va_arg(state->args, char const*);
       break;
     case MMFATL_PH_UNSIGNED:
-      // a %u format specifier is recognized. 
+      // a %u format specifier is recognized.
       arg = unsignedToString(va_arg(state->args, unsigned));
       break;
     case MMFATL_PH_PREFIX:
@@ -408,7 +439,7 @@ inline static struct Buffer* getBufferInstance(void) {
  * Gets the instance of ParserState to use with this interface (currently a
  * global singleton).  The returned instance is not guaranteed to be
  * initialized.
- * \return [not null] a pointer to the ParserState instance 
+ * \return [not null] a pointer to the ParserState instance
  */
 inline static struct ParserState* getParserStateInstance(void) {
   return &state;
@@ -465,14 +496,6 @@ void fatalErrorExit(char const* msgWithPlaceholders, ...) {
   fatalErrorPrintAndExit();
 }
 
-#ifdef TEST_ENABLE
-
-// a reduced error message to ease checking test results
-#define OUTOFMEM_PREFIX "*** "
-#define OUTOFMEM_SUFFIX "\n***"
-
-#else
-
 #define OUTOFMEM_PREFIX \
   "*** FATAL ERROR:  Out of memory.\n"\
   "Internal identifier (for technical support):  "
@@ -484,6 +507,12 @@ void fatalErrorExit(char const* msgWithPlaceholders, ...) {
   "inclusions to reduce the size of your input source.\n" \
   "Monitor memory periodically with SHOW MEMORY."
 
+#ifdef TEST_ENABLE
+// for test use a reduced error message to ease checking results
+# undef OUTOFMEM_PREFIX
+# undef OUTOFMEM_SUFFIX
+# define OUTOFMEM_PREFIX "*** "
+# define OUTOFMEM_SUFFIX "\n***"
 #endif
 
 void outOfMemory(const char *ident, unsigned value) {
@@ -493,7 +522,6 @@ void outOfMemory(const char *ident, unsigned value) {
   fatalErrorPush(OUTOFMEM_SUFFIX);
   fatalErrorPrintAndExit();
 }
-
 
 //=================   Regression tests   =====================
 
@@ -602,7 +630,6 @@ static bool test_appendText(void) {
   // uncomment to deliberately trigger an error message
   // TESTCASE_appendText("_$", 1, "x$", -1, 2, 1);
 
-
   // corner case 1: insertion at the very beginning of the buffer
   TESTCASE_appendText("_$", 1, "$", -1, 2, 1);
   // corner case 2: empty text, placeholder handling
@@ -636,7 +663,7 @@ static bool test_isBufferEmpty(void) {
   limitFreeBuffer(0);
   ASSERT(!isBufferEmpty(&buffer));
 
-  return true;  
+  return true;
 }
 
 static bool test_getLastBufferedChar(void) {
@@ -648,7 +675,7 @@ static bool test_getLastBufferedChar(void) {
   appendText("bc", STRING, &buffer);
   ASSERT(getLastBufferedChar(&buffer) == 'b');
 
-  return true;  
+  return true;
 }
 
 static bool test_handleText(void) {
@@ -673,11 +700,18 @@ static bool test_handleText(void) {
   state.format = "%s";
   handleText(&state);
   ASSERT(*state.format == '%');
-  ASSERT(buffer.begin == buffer.text + 1);  
-  
+  ASSERT(buffer.begin == buffer.text + 1);
+
   state.format = "abc";
   handleText(&state);
   ASSERT(strcmp(buffer.text, "$a$") == 0);
+  ASSERT(*state.format == NUL);
+
+  // replacing unsupported characters
+  fatalErrorInit();
+  state.format = "\x01""a""\x80\xC4""bc";
+  handleText(&state);
+  ASSERT(strcmp(buffer.text, "?a??bc") == 0);
   ASSERT(*state.format == NUL);
 
   return true;
@@ -695,7 +729,7 @@ bool test_unsignedToString(void)
 
 static bool test_handleSubstitution1(char const* format, ...) {
   va_start(state.args, format);
-  
+
   // without initializing the buffer each test appends
   // to the result of the former test.
 
@@ -790,7 +824,7 @@ static char const* testcase_parse(char const* expect, char const* format, ...) {
   parse(&state);
   va_end(state.args);
   return strcmp(buffer.text, expect) == 0?
-    NULL 
+    NULL
     : "text mismatch";
 }
 
@@ -857,15 +891,15 @@ static bool test_fatalErrorPrintAndExit(void) {
   fatalErrorInit(); // pre-condition
   fatalErrorPrintAndExit();
   ASSERT(strcmp(buffer.text, "") == 0);
-  
+
   fatalErrorPush("aaa");
   fatalErrorPrintAndExit();
   ASSERT(strcmp(buffer.text, "aaa\n") == 0);
-  
-  // no second \n is appended 
+
+  // no second \n is appended
   fatalErrorPrintAndExit();
   ASSERT(strcmp(buffer.text, "aaa\n") == 0);
-  
+
   // in overflow condition do not append a LF
   fatalErrorInit();
   while (!isBufferOverflow(&buffer)) // fill the buffer with "a"
@@ -909,7 +943,6 @@ static bool test_outOfMemory() {
 
   return true;
 }
-
 
 void test_mmfatl(void) {
   RUN_TEST(test_unsignedToString);

@@ -29,7 +29,6 @@ mmdata.c
 flag g_listMode = 0; /* 0 = metamath, 1 = list utility */
 flag g_toolsMode = 0; /* In metamath: 0 = metamath, 1 = text tools utility */
 
-
 /* For use by getMarkupFlag() */
 vstring_def(g_proofDiscouragedMarkup);
 vstring_def(g_usageDiscouragedMarkup);
@@ -418,7 +417,6 @@ void *poolFixedMalloc(long size /* bytes */)
   }
 }
 
-
 /* poolMalloc tries first to use an array in the memFreePool before actually
    malloc'ing */
 void *poolMalloc(long size /* bytes */)
@@ -563,7 +561,6 @@ void poolFree(void *ptr)
   return;
 }
 
-
 /* addToUsedPool adds a (partially used) array to the memUsedPool */
 void addToUsedPool(void *ptr)
 {
@@ -646,7 +643,6 @@ void memFreePoolPurge(flag untilOK)
   return;
 }
 
-
 /* Get statistics for SHOW MEMORY command */
 void getPoolStats(long *freeAlloc, long *usedAlloc, long *usedActual)
 {
@@ -665,7 +661,6 @@ void getPoolStats(long *freeAlloc, long *usedAlloc, long *usedActual)
 /*E*/ if (!db9)print2("poolTotalFree %ld  alloc %ld\n", poolTotalFree, *freeAlloc +
 /*E*/   *usedAlloc);
 }
-
 
 void initBigArrays(void)
 {
@@ -710,7 +705,6 @@ long getFreeSpace(long max)
   }
   return (i);
 }
-
 
 /* Bug check */
 void bug(int bugNum)
@@ -825,7 +819,6 @@ flag matchesList(const char *testString, const char *pattern, char wildCard,
   g_startTempAllocStack = saveTempAllocStack;
   return matchVal;
 }
-
 
 /* This function returns a 1 if the first argument matches the pattern of
    the second argument.  The second argument may have wildcard characters.
@@ -962,7 +955,6 @@ flag matches(const char *testString, const char *pattern, char wildCard,
   return (0); /* Dummy return - never used */
 }
 
-
 /*******************************************************************/
 /*********** Number string functions *******************************/
 /*******************************************************************/
@@ -972,7 +964,6 @@ long g_nmbrStartTempAllocStack = 0;   /* Where to start freeing temporary alloca
                                     when nmbrLet() is called (normally 0, except in
                                     special nested vstring functions) */
 temp_nmbrString *nmbrTempAllocStack[M_MAX_ALLOC_STACK];
-
 
 temp_nmbrString *nmbrTempAlloc(long size)
                                 /* nmbrString memory allocation/deallocation */
@@ -1000,7 +991,6 @@ temp_nmbrString *nmbrTempAlloc(long size)
   }
 }
 
-
 /* Make string have temporary allocation to be released by next nmbrLet() */
 /* Warning:  after nmbrMakeTempAlloc() is called, the nmbrString may NOT be
    assigned again with nmbrLet() */
@@ -1021,7 +1011,6 @@ temp_nmbrString *nmbrMakeTempAlloc(nmbrString *s)
 /*E*/db3=db3-(nmbrLen(s)+1)*(long)(sizeof(nmbrString));
   return s;
 }
-
 
 /* nmbrString assignment */
 /* This function must ALWAYS be called to make assignment to */
@@ -1074,7 +1063,6 @@ void nmbrLet(nmbrString **target, const nmbrString *source) {
           }
         }
 
-
 /*E*/if(db9)getPoolStats(&i1,&j1_,&k1); if(db9)printf("k0a: pool %ld stat %ld\n",poolTotalFree,i1+j1_);
       } else {
         /* Free old string space and allocate new space */
@@ -1111,9 +1099,7 @@ void nmbrLet(nmbrString **target, const nmbrString *source) {
           }
         }
 /*E*/if(db9)getPoolStats(&i1,&j1_,&k1); if(db9)printf("k0b: pool %ld stat %ld\n",poolTotalFree,i1+j1_);
-
       }
-
     } else {    /* source is 0 length, target is not */
       poolFree(*target);
       *target= NULL_NMBRSTRING;
@@ -1132,9 +1118,7 @@ void nmbrLet(nmbrString **target, const nmbrString *source) {
 
 /*E*/if(db9)getPoolStats(&i1,&j1_,&k1); if(db9)printf("k1: pool %ld stat %ld\n",poolTotalFree,i1+j1_);
   nmbrTempAlloc(0); /* Free up temporary strings used in expression computation*/
-
 }
-
 
 temp_nmbrString *nmbrCat(const nmbrString *string1,...) /* String concatenation */
 #define M_MAX_CAT_ARGS 30
@@ -1174,9 +1158,7 @@ temp_nmbrString *nmbrCat(const nmbrString *string1,...) /* String concatenation 
     j += argLength[i];
   }
   return ptr;
-
 }
-
 
 /* Find out the length of a nmbrString */
 long nmbrLen(const nmbrString *s)
@@ -1185,7 +1167,6 @@ long nmbrLen(const nmbrString *s)
   return (((long)(((const long *)s)[-1] - (long)(sizeof(nmbrString))))
               / (long)(sizeof(nmbrString)));
 }
-
 
 /* Find out the allocated length of a nmbrString */
 long nmbrAllocLen(const nmbrString *s)
@@ -1213,7 +1194,6 @@ void nmbrZapLen(nmbrString *s, long length) {
 /*E*/if(db9)getPoolStats(&i1,&j1_,&k1); if(db9)printf("l: pool %ld stat %ld\n",poolTotalFree,i1+j1_);
 }
 
-
 /* Copy a string to another (pre-allocated) string */
 /* Dangerous for general purpose use */
 void nmbrCpy(nmbrString *s, const nmbrString *t) {
@@ -1225,7 +1205,6 @@ void nmbrCpy(nmbrString *s, const nmbrString *t) {
   }
   s[i] = t[i]; /* End of string */
 }
-
 
 /* Copy a string to another (pre-allocated) string */
 /* Like strncpy, only the 1st n characters are copied. */
@@ -1241,7 +1220,6 @@ void nmbrNCpy(nmbrString *s, const nmbrString *t, long n) {
   s[i] = t[i]; /* End of string */
 }
 
-
 /* Compare two strings */
 /* Unlike strcmp, this returns a 1 if the strings are equal
    and 0 otherwise. */
@@ -1255,7 +1233,6 @@ flag nmbrEq(const nmbrString *s, const nmbrString *t) {
       return 1;
   return 0;
 }
-
 
 /* Extract sin from character position start to stop into sout */
 temp_nmbrString *nmbrSeg(const nmbrString *sin, long start, long stop) {
@@ -1299,7 +1276,6 @@ temp_nmbrString *nmbrRight(const nmbrString *sin, long n) {
   nmbrCpy(sout, &sin[n - 1]);
   return sout;
 }
-
 
 /* Allocate and return an "empty" string n "characters" long */
 temp_nmbrString *nmbrSpace(long n) {
@@ -1354,7 +1330,6 @@ long nmbrRevInstr(long start_position, const nmbrString *string1,
    return start_position;
 }
 
-
 /* Converts nmbrString to a vstring with one space between tokens */
 temp_vstring nmbrCvtMToVString(const nmbrString *s) {
   long i, j, outputLen, mstrLen;
@@ -1385,7 +1360,6 @@ temp_vstring nmbrCvtMToVString(const nmbrString *s) {
   g_startTempAllocStack = saveTempAllocStack;
   return makeTempAlloc(tmpStr); /* Flag it for deallocation */
 }
-
 
 /* Converts proof to a vstring with one space between tokens */
 temp_vstring nmbrCvtRToVString(const nmbrString *proof,
@@ -1461,7 +1435,6 @@ temp_vstring nmbrCvtRToVString(const nmbrString *proof,
         maxTargetLabelLen = (long)strlen(g_Statement[stmt].labelName);
       }
     }
-
   } /* next step */
 
   /* localLabelNames[] holds an integer which, when converted to string,
@@ -1486,10 +1459,8 @@ temp_vstring nmbrCvtRToVString(const nmbrString *proof,
             ((explicitTargets == 1) ? g_Statement[targetHyps[step]].labelName : ""),
             ((explicitTargets == 1) ? "=" : ""),
             str((double)(localLabelNames[stmt])), " ", NULL));
-
       } else if (stmt != -(long)'?') {
         let(&tmpStr, cat("??", str((double)stmt), " ", NULL)); /* For safety */
-
       } else {
         if (stmt != -(long)'?') bug(1391); /* Must be an unknown step */
         let(&tmpStr, cat(
@@ -1497,10 +1468,8 @@ temp_vstring nmbrCvtRToVString(const nmbrString *proof,
             ((explicitTargets == 1) ? "=" : ""),
             chr(-stmt), " ", NULL));
       }
-
     } else if (stmt < 1 || stmt > g_statements) {
       let(&tmpStr, cat("??", str((double)stmt), " ", NULL)); /* For safety */
-
     } else {
       free_vstring(tmpStr);
       if (nmbrElementIn(1, localLabels, step)) {
@@ -1545,7 +1514,6 @@ temp_vstring nmbrCvtRToVString(const nmbrString *proof,
   return makeTempAlloc(proofStr); /* Flag it for deallocation */
 }
 
-
 /* This function returns a nmbrString of length of reason with
    step numbers assigned to tokens which are steps, and 0 otherwise.
    The returned string is allocated; THE CALLER MUST DEALLOCATE IT. */
@@ -1589,7 +1557,6 @@ nmbrString *nmbrGetProofStepNumbs(const nmbrString *reason) {
   return stepNumbs;
 }
 
-
 /* Converts any nmbrString to an ASCII string of numbers
    -- used for debugging only. */
 temp_vstring nmbrCvtAnyToVString(const nmbrString *s) {
@@ -1607,7 +1574,6 @@ temp_vstring nmbrCvtAnyToVString(const nmbrString *s) {
   g_startTempAllocStack = saveTempAllocStack;
   return makeTempAlloc(tmpStr); /* Flag it for deallocation */
 }
-
 
 /* Extract variables from a math token string */
 temp_nmbrString *nmbrExtractVars(const nmbrString *m) {
@@ -1633,7 +1599,6 @@ temp_nmbrString *nmbrExtractVars(const nmbrString *m) {
   return v;
 }
 
-
 /* Determine if an element (after start) is in a nmbrString; return position
    if it is.  Like nmbrInstr(), but faster.  Warning:  start must NOT
    be greater than length, otherwise results are unpredictable!!  This
@@ -1647,7 +1612,6 @@ long nmbrElementIn(long start, const nmbrString *g, long element) {
   return 0;
 }
 
-
 /* Add a single number to end of a nmbrString - faster than nmbrCat */
 temp_nmbrString *nmbrAddElement(const nmbrString *g, long element) {
   long length;
@@ -1659,7 +1623,6 @@ temp_nmbrString *nmbrAddElement(const nmbrString *g, long element) {
 /*E*/if(db9)getPoolStats(&i1,&j1_,&k1); if(db9)printf("bbg2: pool %ld stat %ld\n",poolTotalFree,i1+j1_);
   return v;
 }
-
 
 /* Get the set union of two math token strings (presumably
    variable lists) */
@@ -1685,7 +1648,6 @@ temp_nmbrString *nmbrUnion(const nmbrString *m1, const nmbrString *m2) {
   return v;
 }
 
-
 /* Get the set intersection of two math token strings (presumably
    variable lists) */
 temp_nmbrString *nmbrIntersection(const nmbrString *m1, const nmbrString *m2)
@@ -1706,7 +1668,6 @@ temp_nmbrString *nmbrIntersection(const nmbrString *m1, const nmbrString *m2)
 /*E*/db2=db2-(len2-nmbrLen(v))*(long)(sizeof(nmbrString));
   return v;
 }
-
 
 /* Get the set difference m1-m2 of two math token strings (presumably
    variable lists) */
@@ -1729,7 +1690,6 @@ temp_nmbrString *nmbrSetMinus(const nmbrString *m1, const nmbrString *m2)
   return v;
 }
 
-
 /* This is a utility function that returns the length of a subproof that
    ends at step */
 /* 22-Aug-2012 nm - this doesn't seem to be used outside of mmdata.c -
@@ -1751,7 +1711,6 @@ long nmbrGetSubproofLen(const nmbrString *proof, long step)
   }
   return (step - pos);
 }
-
 
 /* This function returns a packed or "squished" proof, putting in local label
    references to previous subproofs. */
@@ -1803,7 +1762,6 @@ temp_nmbrString *nmbrSquishProof(const nmbrString *proof) {
   return nmbrMakeTempAlloc(newProof); /* Flag it for deallocation */
 }
 
-
 /* This function unpacks a "squished" proof, replacing local label references
    to previous subproofs by the subproofs themselves. */
 temp_nmbrString *nmbrUnsquishProof(const nmbrString *proof) {
@@ -1827,7 +1785,6 @@ temp_nmbrString *nmbrUnsquishProof(const nmbrString *proof) {
   free_nmbrString(subProof);
   return nmbrMakeTempAlloc(newProof); /* Flag it for deallocation */
 }
-
 
 /* This function returns the indentation level vs. step number of a proof
    string.  This information is used for formatting proof displays.  The
@@ -1874,7 +1831,6 @@ temp_nmbrString *nmbrGetIndentation(const nmbrString *proof, long startingLevel)
   free_nmbrString(nmbrTmp); /* Deallocate */
   return nmbrMakeTempAlloc(indentationLevel); /* Flag it for deallocation */
 } /* nmbrGetIndentation */
-
 
 /* This function returns essential (1) or floating (0) vs. step number of a
    proof string.  This information is used for formatting proof displays.  The
@@ -1930,7 +1886,6 @@ nmbrString *nmbrGetEssential(const nmbrString *proof) {
   free_nmbrString(nmbrTmp); /* Deallocate */
   return nmbrMakeTempAlloc(essentialFlags); /* Flag it for deallocation */
 } /* nmbrGetEssential */
-
 
 /* This function returns the target hypothesis vs. step number of a proof
    string.  This information is used for formatting proof displays.  The
@@ -1991,7 +1946,6 @@ temp_nmbrString *nmbrGetTargetHyp(const nmbrString *proof, long statemNum) {
   return nmbrMakeTempAlloc(targetHyp); /* Flag it for deallocation */
 } /* nmbrGetTargetHyp */
 
-
 /* Converts a proof string to a compressed-proof-format ASCII string.
    Normally, the proof string would be packed with nmbrSquishProof first,
    although it's not a requirement (in which case the compressed proof will
@@ -2037,7 +1991,6 @@ temp_vstring compressProof(const nmbrString *proof, long statemNum,
   nmbrString_def(explWorth);
   long explWidth;
   vstring_def(explIncluded);
-
 
   /* Compression standard with all cap letters */
   /* (For 500-700 step proofs, we only lose about 18% of file size --
@@ -2109,7 +2062,6 @@ temp_vstring compressProof(const nmbrString *proof, long statemNum,
 
   /* To obtain the old algorithm, we simply skip the new label re-ordering */
   if (oldCompressionAlgorithm) goto OLD_ALGORITHM;
-
 
   /* This algorithm, based on an idea proposed by Mario Carneiro, sorts
      the explicit labels so that the most-used labels occur first, optimizing
@@ -2296,7 +2248,6 @@ temp_vstring compressProof(const nmbrString *proof, long statemNum,
      reordered */
   nmbrLet(&assertionList, newExplList);
 
-
  OLD_ALGORITHM:
   /* Combine all label lists */
   nmbrLet(&labelList, nmbrCat(hypList, assertionList, localList, NULL));
@@ -2376,7 +2327,6 @@ temp_vstring compressProof(const nmbrString *proof, long statemNum,
     }
     if (i != numchrs) bug(1374);
 
-
     /***** Local labels ******/
     /* See if a local label is declared in this step */
     if (!localLabelFlags[step]) continue;
@@ -2392,7 +2342,6 @@ temp_vstring compressProof(const nmbrString *proof, long statemNum,
     }
     output[outputLen] = labelChar;
     outputLen++;
-
   } /* Next step */
 
   /* Create the final compressed proof */
@@ -2423,7 +2372,6 @@ temp_vstring compressProof(const nmbrString *proof, long statemNum,
   return makeTempAlloc(output); /* Flag it for deallocation */
 } /* compressProof */
 
-
 /* Compress the input proof, create the ASCII compressed proof,
    and return its size in bytes. */
 /* TODO: call this in MINIMIZE_WITH in metamath.c */
@@ -2442,7 +2390,6 @@ long compressedProofSize(const nmbrString *proof, long statemNum) {
   free_nmbrString(tmpNmbr);
   return bytes;
 } /* compressedProofSize */
-
 
 /*******************************************************************/
 /*********** Pointer string functions ******************************/
@@ -2521,7 +2468,6 @@ temp_pntrString *pntrTempAlloc(long size) {
   }
 }
 
-
 temp_pntrString *pntrMakeTempAlloc(pntrString *s) {
   if (g_pntrTempAllocStackTop>=(M_MAX_ALLOC_STACK-1)) {
     printf(
@@ -2538,7 +2484,6 @@ temp_pntrString *pntrMakeTempAlloc(pntrString *s) {
 /*E*/db3=db3-(pntrLen(s)+1)*(long)(sizeof(pntrString));
   return s;
 }
-
 
 void pntrLet(pntrString **target, const pntrString *source) {
   long targetLength,sourceLength;
@@ -2587,7 +2532,6 @@ void pntrLet(pntrString **target, const pntrString *source) {
           }
         }
 
-
 /*E*/if(db9)getPoolStats(&i1,&j1_,&k1); if(db9)printf("k0a: pool %ld stat %ld\n",poolTotalFree,i1+j1_);
       } else {
         /* Free old string space and allocate new space */
@@ -2624,9 +2568,7 @@ void pntrLet(pntrString **target, const pntrString *source) {
           }
         }
 /*E*/if(db9)getPoolStats(&i1,&j1_,&k1); if(db9)printf("k0b: pool %ld stat %ld\n",poolTotalFree,i1+j1_);
-
       }
-
     } else {    /* source is 0 length, target is not */
       poolFree(*target);
       *target= NULL_PNTRSTRING;
@@ -2645,9 +2587,7 @@ void pntrLet(pntrString **target, const pntrString *source) {
 
 /*E*/if(db9)getPoolStats(&i1,&j1_,&k1); if(db9)printf("k1: pool %ld stat %ld\n",poolTotalFree,i1+j1_);
   pntrTempAlloc(0); /* Free up temporary strings used in expression computation*/
-
 }
-
 
 /* String concatenation */
 temp_pntrString *pntrCat(const pntrString *string1,...) {
@@ -2688,9 +2628,7 @@ temp_pntrString *pntrCat(const pntrString *string1,...) {
     j=j+argLength[i];
   }
   return ptr;
-
 }
-
 
 /* Find out the length of a pntrString */
 long pntrLen(const pntrString *s) {
@@ -2698,7 +2636,6 @@ long pntrLen(const pntrString *s) {
   return ((((const long *)s)[-1] - (long)(sizeof(pntrString)))
       / (long)(sizeof(pntrString)));
 }
-
 
 /* Find out the allocated length of a pntrString */
 long pntrAllocLen(const pntrString *s) {
@@ -2723,7 +2660,6 @@ void pntrZapLen(pntrString *s, long length) {
   ((long *)s)[-1] = (length + 1) * (long)(sizeof(pntrString));
 /*E*/if(db9)getPoolStats(&i1,&j1_,&k1); if(db9)printf("l: pool %ld stat %ld\n",poolTotalFree,i1+j1_);
 }
-
 
 /* Copy a string to another (pre-allocated) string */
 /* Dangerous for general purpose use */
@@ -2769,7 +2705,6 @@ void pntrCpy(pntrString *s, const pntrString *t) {
   s[i] = t[i]; /* End of string */
 }
 
-
 /* Copy a string to another (pre-allocated) string */
 /* Like strncpy, only the 1st n characters are copied. */
 /* Dangerous for general purpose use */
@@ -2784,7 +2719,6 @@ void pntrNCpy(pntrString *s, const pntrString *t, long n) {
   s[i] = t[i]; /* End of string */
 }
 
-
 /* Compare two strings */
 /* Unlike strcmp, this returns a 1 if the strings are equal
    and 0 otherwise. */
@@ -2797,7 +2731,6 @@ flag pntrEq(const pntrString *s, const pntrString *t) {
       return 1;
   return 0;
 }
-
 
 /* Extract sin from character position start to stop into sout */
 temp_pntrString *pntrSeg(const pntrString *sin, long start, long stop) {
@@ -2842,7 +2775,6 @@ temp_pntrString *pntrRight(const pntrString *sin, long n) {
   pntrCpy(sout, &sin[n-1]);
   return sout;
 }
-
 
 /* Allocate and return an "empty" string n "characters" long */
 /* Each entry in the allocated array points to an empty vString. */
@@ -2904,8 +2836,7 @@ long pntrInstr(long start_position, const pntrString *string1,
      }
      if (j == ls2) return (i+1);
    }
-   return (0);
-
+   return 0;
 }
 
 /* Search for string2 in string 1 in reverse starting at start_position */
@@ -2924,9 +2855,8 @@ long pntrRevInstr(long start_position, const pntrString *string1,
         /* Clear temporaries to prevent overflow caused by "mid" */
      if (start_position < 1) return 0;
    }
-   return (start_position);
+   return start_position;
 }
-
 
 /* Add a single null string element to a pntrString - faster than pntrCat */
 temp_pntrString *pntrAddElement(const pntrString *g)
@@ -2940,7 +2870,6 @@ temp_pntrString *pntrAddElement(const pntrString *g)
   return v;
 }
 
-
 /* Add a single null pntrString element to a pntrString -faster than pntrCat */
 temp_pntrString *pntrAddGElement(const pntrString *g)
 {
@@ -2952,11 +2881,9 @@ temp_pntrString *pntrAddGElement(const pntrString *g)
   return v;
 }
 
-
 /*******************************************************************/
 /*********** Miscellaneous utility functions ***********************/
 /*******************************************************************/
-
 
 /* 0/1 knapsack algorithm */
 /* Returns the maximum worth (value) for items that can fit into maxSize */
@@ -3022,7 +2949,6 @@ long knapsack01(long items, /* # of items available to populate knapsack */
   return a;
 } /* knapsack01 */
 
-
 /* Allocate a 2-dimensional long integer matrix */
 /* Warning:  only entries 0,...,xsize-1 and 0,...,ysize-1 are allocated;
    don't use entry xsize or ysize! */
@@ -3041,7 +2967,6 @@ long **alloc2DMatrix(size_t xsize, size_t ysize)
   return matrix;
 } /* alloc2DMatrix */
 
-
 /* Free a 2-dimensional long integer matrix */
 /* Note: the ysize argument isn't used, but is commented out as
    a reminder so the caller doesn't confuse x and y */
@@ -3056,7 +2981,6 @@ void free2DMatrix(long **matrix, size_t xsize /*, size_t ysize*/)
   free(matrix);
   return;
 } /* free2DMatrix */
-
 
 /* Returns the amount of indentation of a statement label.  Used to
    determine how much to indent a saved proof. */
@@ -3082,7 +3006,6 @@ long getSourceIndentation(long statemNum) {
   return indentation;
 } /* getSourceIndentation */
 
-
 /* Returns the last embedded comment (if any) in the label section of
    a statement.  This is used to provide the user with information in the SHOW
    STATEMENT command.  The caller must deallocate the result. */
@@ -3103,7 +3026,6 @@ vstring getDescription(long statemNum) {
       8 + 128 /* discard leading and trailing blanks */));
   return description;
 } /* getDescription */
-
 
 /* Returns the label section of a statement with all comments except the
    last removed.  Unlike getDescription, this function returns the comment
@@ -3162,7 +3084,6 @@ vstring getDescriptionAndLabel(long stmt) {
 
   return descriptionAndLabel;
 } /* getDescriptionAndLabel */
-
 
 /* Returns 0 or 1 to indicate absence or presence of an indicator in
    the comment of the statement. */
@@ -3242,7 +3163,6 @@ flag getMarkupFlag(long statemNum, flag mode) {
   bug(1394);
   return 0;
 } /* getMarkupFlag */
-
 
 /* Extract contributor or date from statement description per the
    following mode argument:
@@ -3486,7 +3406,6 @@ vstring getContrib(long stmtNum, char mode) {
          seg(description, sMid + 1, sEnd - 1));
     }
 
-
     /* Get the most recent date */
     let((vstring *)(&(mostRecentDateList[stmtNum])),
         (vstring)(contribDateList[stmtNum]));
@@ -3628,7 +3547,6 @@ vstring getContrib(long stmtNum, char mode) {
         str((double)stmtNum), ", label \"", g_Statement[stmtNum].labelName, "\".",
         NULL), "    ", " ");
   }
-
 
   /*********  Turn off this warning unless we decide not to allow this
   if ((firstR != rStart) || (firstS != sStart)) {
@@ -3784,7 +3702,6 @@ vstring getContrib(long stmtNum, char mode) {
     let(&returnStr, "P");  /* pass */
   }
 
-
  RETURN_POINT:
 
   free_vstring(description);
@@ -3804,7 +3721,6 @@ vstring getContrib(long stmtNum, char mode) {
 
   return returnStr;
 } /* getContrib */
-
 
 /* Extract up to 2 dates after a statement's proof.  If no date is present,
    date1 will be blank.  If no 2nd date is present, date2 will be blank.
@@ -3836,7 +3752,6 @@ void getProofDate(long stmtNum, vstring *date1, vstring *date2) {
   return;
 } /* getProofDate */
 
-
 /* Get date, month, year fields from a dd-mmm-yyyy date string,
    where dd may be 1 or 2 digits, mmm is 1st 3 letters of month,
    and yyyy is 2 or 4 digits.  A 1 is returned if an error was detected. */
@@ -3861,7 +3776,6 @@ flag parseDate(vstring dateStr, long *dd, long *mmm, long *yyyy) {
   return err;
 } /* parseDate */
 
-
 /* Build date from numeric fields.  mmm should be a number from 1 to 12.
    There is no error-checking. */
 void buildDate(long dd, long mmm, long yyyy, vstring *dateStr) {
@@ -3869,7 +3783,6 @@ void buildDate(long dd, long mmm, long yyyy, vstring *dateStr) {
       str((double)yyyy), NULL));
   return;
 } /* buildDate */
-
 
 /* Compare two dates in the form dd-mmm-yyyy.  -1 = date1 < date2,
    0 = date1 = date2,  1 = date1 > date2.  There is no error checking. */
@@ -3901,7 +3814,6 @@ flag compareDates(vstring date1, vstring date2) {
     return 1;
   }
 } /* compareDates */
-
 
 /* Compare strings via pointers for qsort */
 /* g_qsortKey is a global string key at which the sort starts; if empty,

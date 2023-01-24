@@ -84,7 +84,6 @@ extern flag g_outputToString;
  */
 extern vstring g_printString;
 
-
 /* Global variables used by cmdInput() */
 
 /*!
@@ -129,7 +128,6 @@ extern flag g_commandFileSilent[MAX_COMMAND_FILE_NESTING + 1];
  * SUBMIT ... /SILENT commands.  Initialized to 0 on program start.
  */
 extern flag g_commandFileSilentFlag; /* For SUBMIT ... /SILENT */
-
 
 extern FILE *g_input_fp;  /*!< File pointers */
 extern vstring g_input_fn, g_output_fn;  /*!< File names */
@@ -309,7 +307,7 @@ extern vstring g_input_fn, g_output_fn;  /*!< File names */
  * \param[in] fmt (not null) NUL-terminated text to display with embedded
  *   placeholders for insertion of data (which are converted into text if
  *   necessary) pointed to by the following parameters.  The format string uses
- *   the same syntax as 
+ *   the same syntax as
  *   <a href="https://en.cppreference.com/w/c/io/fprintf">[printf]</a>.  A LF
  *   character must only be in final position, and ETX (0x03) is not allowed.
  *   This parameter is ignored when \ref backFromCmdInput is 1.
