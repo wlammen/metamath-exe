@@ -75,7 +75,7 @@
  * have free space again for, say, \p printf, even though we are about to exit
  * program execution, for two reasons:
  *   - We want to gather diagnostic information, so some program structures
- *     need to be intact;
+ *     need to be available;
  *   - The fatal error routines need not be the last portion of the program
  *     executing.  If a function is registered with \p atexit, it is called
  *     after an exit is triggered, and this function may rely on allocated
@@ -99,8 +99,8 @@ enum {
  *
  * the character sequence appended to a truncated fatal error message due to a
  * buffer overflow, so its reader is aware a displayed text is incomplete.  The
- * ellipsis is followed by a line feed to ensure an overflown message is still
- * on the previous line of the command prompt following program exit.
+ * ellipsis is followed by a line feed to ensure an overflown message still
+ * terminates on the line prior to the command prompt following program exit.
  */
 #define MMFATL_ELLIPSIS "...\n"
 
@@ -131,19 +131,23 @@ enum fatalErrorPlaceholderType {
 // ***   Interface of fatal error message processing   ***/
 
 /*!
- * \brief Prepare internal data structures for an error message.
+ * \brief Prepare internal data structures just before printing a fatal error
  *
  * Empties the message buffer used to construct error messages by
  * \ref fatalErrorPush.
  *
  * Prior to generating an error message some internal data structures need to
- * be initialized.  Usually such initialization is automatically executed on
- * program startup.  Since we are in a fatal error situation, we do not rely
- * on this.  Instead we assume memory corruption has affected this module's
- * data and renders its state useless.  So we initialize it immediately before
- * the error message is generated.  Note that we still rely on part of the
- * system be running.  We cannot overcome a fully clobbered system, we only
- * can increase our chances of bypassing some degree of memory corruption.
+ * be initialized.  If \ref setupFatalError has stored an environment, and it
+ * passes the validity check, then this environment is established.  Otherwise
+ * the stack is used unmodified, hoping for the best.
+ *
+ * Other initialization is usually automatically executed on program startup.
+ * Since we are in a fatal error situation, we do not rely on this.  Instead we
+ * assume memory corruption has affected this module's data and renders its
+ * state useless.  So we initialize it immediately before the error message is
+ * generated.  Note that we still rely on part of the system be running.  We
+ * cannot overcome a fully clobbered system, we only can increase our chances
+ * of bypassing some degree of memory corruption.
  * \post internal data structures are initialized and ready for constructing
  *   a message from a format string and parameter values.  Any previous
  *   contents is discarded.
@@ -295,12 +299,11 @@ extern void fatalErrorExit(char const* msgWithPlaceholders, ...);
  * called when memory cannot be allocated, either because memory/address space
  * is physically exhausted, or because administrative structures would overflow.
  * A non-recoverable condition, so stops execution printing an error message
- * \param[in] ident [printf style] used to identify both the location of the
- *   failing allocation, and gives some context information.  Part of the error
- *   message sent to stderr.  A line feed is padded to the right, so it appears
- *   at the end of line.  It may contain at most one %u placeholder that gets
- *   replaced with \p value.  Any % character part of the text must be escaped
- *   as %%.
+ * \param[in] ident [printf style] used to identify the location of the failing
+ *   allocation, and gives some context information.  Part of the error message
+ *   sent to stderr.  A line feed is padded to the right, so it appears at the
+ *   end of line.  It may contain at most one %u placeholder that gets replaced
+ *   with \p value.  Any % character part of the text must be escaped as %%.
  * \param[in] value replaces a %u placeholder in \p ident, if exists, ignored
  *   otherwise.  If not used, best assign 0, as some processors supply extra
  *   machine instructions for this frequent value. (C neither allows

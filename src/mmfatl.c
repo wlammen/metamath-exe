@@ -27,11 +27,12 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <setjmp.h>
 
 #include "mmfatl.h"
 
 /*!
- * supported ASCII control characters in an error message, other control
+ * supported ASCII control characters in an error message.  Other control
  * characters as well as multibyte UTF-8 extensions, are replaced with
  * UNSUPPORTED_REPLACE
  */
@@ -66,7 +67,7 @@ enum {
  * is padded to the right, so in case of a buffer overflow both concatenated
  * portions automatically indicate truncated text.
  *
- * The available unallocated buffer space is delimited by member *end*  on the
+ * The available unallocated buffer space is delimited by member *end* on the
  * right.  Write operations must never write to its address, or even trespass
  * it.  The current implementation sees its value as constant once it got
  * initialized.
@@ -526,6 +527,12 @@ void outOfMemory(const char *ident, unsigned value) {
 //=================   Regression tests   =====================
 
 #ifdef TEST_ENABLE
+
+/* file: minunit.h */
+//  #define mu_assert(message, test) do { if (!(test)) return message; } while (0)
+//  #define mu_run_test(test) do { char *message = test(); tests_run++; \
+//                                 if (message) return message; } while (0)
+//  extern int tests_run;
 
 static bool test_fatalErrorInit(void) {
   // emulate memory corruption
