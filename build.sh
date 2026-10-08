@@ -46,7 +46,7 @@ unset dest_dir
 unset doc_dir
 top_dir="$(pwd)"
 
-while getopts abcdghm:o:t:v flag
+while getopts abcdghm:o:tv flag
 do
   case "${flag}" in
     a) version_for_autoconf=1;;
@@ -57,19 +57,23 @@ do
     h) print_help=1;;
     m) cd "${OPTARG}" && top_dir=$(pwd);;
     o) dest_dir=${OPTARG};;
-    t) do_make_test=1
-       case "${OPTARG}" in
-         ""|silent|verbose)
-           show_success_message="${OPTARG}";;
-         *)
-           echo "Error: -t accepts 'verbose' or 'silent'." >&2
-           exit 1;;
-       esac;;
+    t) do_make_test=1;;
     v) version_only=1;;
     *) echo "unknown parameter" >&2
        exit 1;;
   esac
 done
+
+shift $((OPTIND - 1))
+
+if [ "$do_make_test" -eq 1 ] && [ $# -gt 0 ]; then
+  case "$1" in
+    silent|verbose)
+      show_success_message="$1"
+      shift
+      ;;
+  esac
+fi
 
 if [ $print_help -gt 0 ]
 then
