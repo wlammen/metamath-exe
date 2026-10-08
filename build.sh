@@ -17,17 +17,19 @@ directory (build, build-cosmo, build-test, build-cosmo-test).
 
 Possible options are:
 
--a Used by autotools. Put hyphens in the version string when used with -v
+-a Used by autotools. Put hyphens in the version string when used with -v.
 -b build binary only, no reconfigure. Faster, but should not be used on first run.
 -c Clean the build directory.
 -d build documentation using Doxygen, in addition to building the executable.
--g build in debug mode: enables debug symbols and turns off optimizations
+-g build in debug mode: enables debug symbols and turns off optimizations.
 -h print this help and exit.
 -m followed by a directory: top folder of metamath-exe.
     Relative paths are relative to the current directory.
 -o followed by a directory: optionally clean directory and build all artefacts there.
     Relative paths are relative to the destination'"'"'s top metamath-exe directory.
--t compile a metamath_test executable for regression tests
+-t compile a metamath_test executable for regression tests.
+    An optional value "silent" or "verbose" overrides the default, and explicitly
+    selects whether messages from successful tests are shown.
 -v extract the version from metamath sources, print it and exit'
 
 #============   evaluate command line parameters   ==========
@@ -44,7 +46,7 @@ unset dest_dir
 unset doc_dir
 top_dir="$(pwd)"
 
-while getopts abcdghm:o:tv flag
+while getopts abcdghm:o:t:v flag
 do
   case "${flag}" in
     a) version_for_autoconf=1;;
@@ -55,7 +57,14 @@ do
     h) print_help=1;;
     m) cd "${OPTARG}" && top_dir=$(pwd);;
     o) dest_dir=${OPTARG};;
-    t) do_make_test=1;;
+    t) do_make_test=1
+       case "${OPTARG}" in
+         ""|silent|verbose)
+           show_success_message="${OPTARG}";;
+         *)
+           echo "Error: -t accepts 'verbose' or 'silent'." >&2
+           exit 1;;
+       esac;;
     v) version_only=1;;
     *) echo "unknown parameter" >&2
        exit 1;;
@@ -167,7 +176,32 @@ fi
 if [ $do_make_test -eq 1 ]
 then
   # create an executable running regression tests
-  make "CFLAGS=-DTEST_ENABLE"
+
+  # Silent tests produce no output when they pass.
+  # In automated contexts like continuous integration checks we do not want
+  # to clutter log files with success messages. This is avoided when the
+  # option -t has the value 'silent'. With 'verbose', no restriction is
+  # put on messages.
+
+  # An unset or empty value leaves the default behavior implemented in the
+  # Metamath executable sources unchanged, usually close to 'verbose'.
+
+  # In an automated context, call this script as follows
+  # build.sh -t silent
+
+  case "$show_success_message" in
+    silent)
+      TEST_SILENT_DEFINE="-DTEST_SILENT=true"
+      ;;
+    verbose)
+      TEST_SILENT_DEFINE="-DTEST_SILENT=false"
+      ;;
+    "")
+      TEST_SILENT_DEFINE=""
+      ;;
+  esac
+
+  make "CFLAGS=-DTEST_ENABLE $TEST_SILENT_DEFINE"
   mv src/metamath "$top_dir"/metamath_test
 else
   # normal executable

@@ -135,16 +135,30 @@
 
 #include <stdio.h>
 
-/*!
- * \def TEST_SILENT
- * macro, either true or false.
- *
- * Controls the verbosity of a regression test.  If true, success messages are
- * mostly suppressed during a test run.  A failing test always produces output.
- */
-#define TEST_SILENT false
-
 #ifdef TEST_ENABLE
+  /*!
+   * \def TEST_SILENT
+   * \brief A \c _Bool-compatible value controlling the output of successful
+   * regression tests.
+   *
+   * Has no effect if regression tests are disabled.  Its default is \c false,
+   * allowing output.
+   *
+   * Defining \p TEST_SILENT on the compiler command line takes precedence.
+   * This is recommended, for example, in a \c make or \c Makefile.in script
+   * used for automated checks, when only failures need to be reported.
+   *
+   * Developers verifying that no breaking change was accidentally introduced
+   * often want to watch the progress of the tests until an error is
+   * reported. The default allows this.
+   *
+   * Historically, \p TEST_SILENT was patched directly in this file for this
+   * purpose, so this method remains supported for backward compatibility.
+   */
+  #ifndef TEST_SILENT
+    // the default
+    #define TEST_SILENT false
+  #endif
 
   extern void runTest(
       bool (*test)(), const char* funcName, const char* testName);
