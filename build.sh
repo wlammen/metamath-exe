@@ -64,6 +64,7 @@ do
   esac
 done
 
+# check trailing parameters after flags are parsed
 shift $((OPTIND - 1))
 
 if [ "$do_make_test" -eq 1 ] && [ $# -gt 0 ]; then
