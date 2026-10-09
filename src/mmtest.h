@@ -146,13 +146,18 @@
    *
    * Defining \p TEST_SILENT on the compiler command line takes precedence.
    * This is recommended, for example, in a \c make or \c Makefile.in script
-   * used for automated checks, when only failures need to be reported.
+   * used for automated checks, when only failures need to be reported. Using
+   * an optional \c t-silent or \c t-verbose argument to \c build.sh also
+   * explicitly sets this macro, as in
+   * \code
+   * .\build.sh -tc t-silent
+   * \endcode
    *
    * Developers verifying that no breaking change was accidentally introduced
-   * often want to watch the progress of the tests until an error is
-   * reported. The default allows this.
+   * often want to monitor test progress until an error is reported. The default
+   * allows this.
    *
-   * Historically, \p TEST_SILENT was patched directly in this file for this
+   * Historically, \p TEST_SILENT was modified directly in this file for this
    * purpose, so this method remains supported for backward compatibility.
    */
   #ifndef TEST_SILENT
