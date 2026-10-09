@@ -69,7 +69,6 @@ shift $((OPTIND - 1))
 
 if [ "$do_make_test" -eq 1 ] && [ $# -gt 0 ]; then
   case "$1" in
-    -
     t-silent|t-verbose)
       show_success_message="$1"
       shift
