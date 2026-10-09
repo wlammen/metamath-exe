@@ -7,7 +7,7 @@
 # Draft version, proof of concept.
 
 help_text=\
-'Builds all artefacts in the metamath-exe/build subfolder (if not directed
+'Builds all artefacts in the metamath-exe/build subfolder (unless directed
 otherwise).  Change to the metamath-exe top folder first before running
 this script, or issue the -m option.
 
@@ -21,14 +21,14 @@ Possible options are:
 -b build binary only, no reconfigure. Faster, but should not be used on first run.
 -c Clean the build directory.
 -d build documentation using Doxygen, in addition to building the executable.
--g build in debug mode: enables debug symbols and turns off optimizations.
+-g build in debug mode: enables debug symbols and disables optimizations.
 -h print this help and exit.
 -m followed by a directory: top folder of metamath-exe.
     Relative paths are relative to the current directory.
 -o followed by a directory: optionally clean directory and build all artefacts there.
     Relative paths are relative to the destination'"'"'s top metamath-exe directory.
--t compile a metamath_test executable for regression tests.
-    An optional value "silent" or "verbose" overrides the default, and explicitly
+-t compile a metamath_test executable for regression testing.
+    An optional parameter, "t-silent" or "t-verbose", following all flags explicitly
     selects whether messages from successful tests are shown.
 -v extract the version from metamath sources, print it and exit'
 
@@ -69,7 +69,8 @@ shift $((OPTIND - 1))
 
 if [ "$do_make_test" -eq 1 ] && [ $# -gt 0 ]; then
   case "$1" in
-    silent|verbose)
+    -
+    t-silent|t-verbose)
       show_success_message="$1"
       shift
       ;;
@@ -192,13 +193,13 @@ then
   # Metamath executable sources unchanged, usually close to 'verbose'.
 
   # In an automated context, call this script as follows
-  # build.sh -t silent
+  # build.sh -t t-silent
 
   case "$show_success_message" in
-    silent)
+    t-silent)
       TEST_SILENT_DEFINE="-DTEST_SILENT=true"
       ;;
-    verbose)
+    t-verbose)
       TEST_SILENT_DEFINE="-DTEST_SILENT=false"
       ;;
     "")

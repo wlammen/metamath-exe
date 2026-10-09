@@ -61,7 +61,7 @@ jobs:
 
       - name: build
         run: ./build.sh -t
-        # run: ./build.sh -t silent
+        # run: ./build.sh -t t-silent
 
       - name: test
         run: ./metamath_test
